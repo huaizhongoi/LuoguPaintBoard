@@ -3,7 +3,7 @@ import json
 import sys
 
 DataPath=".\\board.json"
-Data2Path=".\\board2.json"
+# Data2Path=".\\board2.json"
 
 if len(sys.argv)<4:
     print("ImageToData.py ImagePath LeftTopX LeftTopY")
