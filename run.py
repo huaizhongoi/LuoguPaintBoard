@@ -55,18 +55,19 @@ while True:
     getboard=requests.get("https://www.luogu.com.cn/paintBoard/board",headers=getheader)
     todo = []
     for i in board:
-        x=i[0] + 30
+        x=i[0]
         y=i[1]
         col=i[2]
         if x*401+y<len(getboard.text) and int(getboard.text[x*401+y],32)!=col:
             todo.append(i)
     cnt = len(todo)
+    # print(todo)
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) , "[Info]:Have", cnt , 'to do')
     if cnt == 0:
         time.sleep(Timeout)
     for i in range(cnt):
-        bd = todo
-        x=bd[0] + 30
+        bd = todo[i]
+        x=bd[0]
         y=bd[1]
         col=bd[2]
         while True:

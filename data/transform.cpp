@@ -109,9 +109,11 @@ void BMPtoPPM(char *pFrameRGB){
 }
 
 int main(){
-	printf("Please enter the starting coordinates:");
-	scanf("%d%d",&deltax,&deltay);
-    char readPath[]="a.bmp";
+//	printf("Please enter the starting coordinates:");
+//	scanf("%d%d",&deltax,&deltay);
+	deltax = 50;
+	deltay = 310;
+    char readPath[]="4.bmp";
     BMPtoPPM(readPath); 
 	return 0;
 }
