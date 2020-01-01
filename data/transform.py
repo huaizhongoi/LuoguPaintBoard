@@ -1,5 +1,8 @@
 from PIL import Image
 import json
+import sys
+
+DataPath = 'board.json'
 col=[
     [0, 0, 0],
     [255, 255, 255],
@@ -34,6 +37,22 @@ col=[
     [184, 63, 39],
     [121, 85, 72]
 ]
+if len(sys.argv)<5:
+    print("transform.py 'add'/'create' ImagePath LeftTopX LeftTopY")
+    exit(0)
+Type = sys.argv[1]
+ImagePath = sys.argv[2]
+X = int(sys.argv[3])
+Y = int(sys.argv[4])
+# print(Type, ImagePath, X, Y)
+if Type != 'add' and Type != 'create':
+    print("transform.py ImagePath add/create")
+    exit(0)
+if Type == 'add':
+    Type = 0
+else:
+    Type = 1
+oldimage = Image.open(ImagePath)
 
 coldata = []
 Length = len(col)
@@ -42,9 +61,26 @@ for i in range(Length):
     coldata.append(col[i][1])
     coldata.append(col[i][2])
 
-im = Image.open('ll.bmp')
+# 转换为board.json
+def toboard(im):
+    size = im.size
+    src = im.load()
+    board = []
+    for x in range(size[0]):
+        for y in range(size[1]):
+            board.append([x + X, y + Y, src[x,y]])
+    board = json.dumps(board)
+    with open(DataPath,'w+') as f:
+        f.write(board)
 
-'''
+
+# 抖动算法
+def method1():
+    palimage = Image.new('P', oldimage.size)
+    palimage.putpalette(coldata * (int)(256/Length))
+    newimage = oldimage.quantize(palette=palimage)
+    toboard(newimage)
+
 def quantizetopalette(silf, palette, dither=False):
     """Convert an RGB or L mode image to use a given P image's palette."""
 
@@ -67,22 +103,14 @@ def quantizetopalette(silf, palette, dither=False):
     except AttributeError:
         return silf._makeself(im)
 
-# palettedata = [0, 0, 0, 102, 102, 102, 176, 176, 176, 255, 255, 255]
-palimage = Image.new('P', im.size)
-palimage.putpalette(coldata * (int)(256/Length))
-# oldimage = Image.open("School_scrollable1.png")
-newimage = quantizetopalette(im, palimage, dither=False)
-# newimage.show()
-'''
-palimage = Image.new('P', im.size)
-palimage.putpalette(coldata * (int)(256/Length))
-newimage = im.quantize(palette=palimage)
+# 非抖动算法
+def method2():
+    palimage = Image.new('P', oldimage.size)
+    palimage.putpalette(coldata * (int)(256/Length))
+    newimage = quantizetopalette(oldimage, palimage, dither=False)
+    toboard(newimage)
 
-# expanded_coldata = coldata * (int)(256/Length)
-# newimage = im.convert('P', dither=Image.NONE, palette=expanded_coldata)
+method1()
 
-# newimage = Image.new('P', im.size)
-# newimage.putpalette(coldata * (int)(256/Length))
-# newimage.paste(im, (0, 0) + im.size)
-# im.putpalette( tmp * 64)
-newimage.save('3.bmp')
+# ↓效果较差，勿用↓
+# method2()
