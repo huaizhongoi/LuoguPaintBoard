@@ -1,5 +1,8 @@
 from PIL import Image
 import json
+import requests
+
+DataPath = 'board.json'
 col=[
     [0, 0, 0],
     [255, 255, 255],
@@ -35,17 +38,34 @@ col=[
     [121, 85, 72]
 ]
 
-X = 170
-Y = 310
+getheader={
+    "refer":"https://www.luogu.com.cn/paintBoard",
+    "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+}
+getboard=requests.get("https://www.luogu.com.cn/paintBoard/board",headers=getheader)
 
-im = Image.new("RGB", (110, 90))   #创建图片
-with open("data/board.json",'r') as boardjson:
-    board=json.load(boardjson)
+W = 800
+H = 400
+img = Image.new("RGB", (W, H))   #创建图片
+pimg = img.load()
+print('AllX:', W)
+for x in range(W):
+    if x % 100 == 0:
+        print('nowX:', x)
+    for y in range(H):
+        c = col[int(getboard.text[x*401+y],32)]
+        pimg[x, y] = (c[0], c[1], c[2])
+
+try:
+    with open(DataPath,'r') as boardjson:
+        board=json.load(boardjson)
+except:
+    board = []
 for i in board:
-    x = i[0] - X
-    y = i[1] - Y
-    rgb = col[i[2]]
-    # print(i[2])
-    im.putpixel((x, y), (int(rgb[0]), int(rgb[1]), int(rgb[2])))
+    x = i[0]
+    y = i[1]
+    c = col[i[2]]
+    pimg[x, y] = (c[0], c[1], c[2])
 
-im.save("preview.bmp")
+img.save("preview.bmp")
+print('Finish.')
