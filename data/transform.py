@@ -44,6 +44,7 @@ Type = sys.argv[1]
 ImagePath = sys.argv[2]
 X = int(sys.argv[3])
 Y = int(sys.argv[4])
+SpeedType = 0
 # print(Type, ImagePath, X, Y)
 if Type != 'add' and Type != 'create':
     print("transform.py ImagePath add/create")
@@ -52,6 +53,8 @@ if Type == 'add':
     Type = 0
 else:
     Type = 1
+if sys.argv[5] == 'speed':
+    SpeedType = 1
 oldimage = Image.open(ImagePath)
 
 coldata = []
@@ -75,6 +78,8 @@ def toboard(im):
         board = []
     for x in range(size[0]):
         for y in range(size[1]):
+            if SpeedType == 1 and src[x,y] ==2:
+                continue
             board.append([x + X, y + Y, src[x,y]])
     board = json.dumps(board)
     with open(DataPath,'w+') as f:
