@@ -65,7 +65,14 @@ for i in range(Length):
 def toboard(im):
     size = im.size
     src = im.load()
-    board = []
+    if Type == 0:
+        try:
+            with open(DataPath,'r') as boardjson:
+                board = json.load(boardjson)
+        except:
+            board = []
+    else:
+        board = []
     for x in range(size[0]):
         for y in range(size[1]):
             board.append([x + X, y + Y, src[x,y]])
