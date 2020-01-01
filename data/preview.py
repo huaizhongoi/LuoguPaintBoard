@@ -1,5 +1,6 @@
 from PIL import Image
 import json
+import sys
 import requests
 
 DataPath = 'board.json'
@@ -46,16 +47,30 @@ getboard=requests.get("https://www.luogu.com.cn/paintBoard/board",headers=gethea
 
 W = 800
 H = 400
-img = Image.new("RGB", (W, H))   #创建图片
-pimg = img.load()
-print('AllX:', W)
-for x in range(W):
-    if x % 100 == 0:
-        print('nowX:', x)
-    for y in range(H):
-        c = col[int(getboard.text[x*401+y],32)]
-        pimg[x, y] = (c[0], c[1], c[2])
 
+# ↓使用纯色画板（速度快）↓
+def GetImage1():
+    img = Image.new("RGB", (W, H), (170, 170, 170))
+    return img
+
+# ↓使用当前画板（速度慢）↓
+def GetImage2():
+    img = Image.new("RGB", (W, H))
+    pimg = img.load()
+    print('AllX:', W)
+    for x in range(W):
+        if x % 100 == 0:
+            print('nowX:', x)
+        for y in range(H):
+            c = col[int(getboard.text[x*401+y],32)]
+            pimg[x, y] = (c[0], c[1], c[2])
+    return img
+
+if len(sys.argv) >= 2 and sys.argv[1] == 'speed':
+    img = GetImage1()
+else:
+    img = GetImage2()
+pimg = img.load()
 try:
     with open(DataPath,'r') as boardjson:
         board=json.load(boardjson)
