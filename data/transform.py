@@ -53,7 +53,7 @@ if Type == 'add':
     Type = 0
 else:
     Type = 1
-if sys.argv[5] == 'speed':
+if len(sys.argv) >= 6 and sys.argv[5] == 'speed':
     SpeedType = 1
 oldimage = Image.open(ImagePath)
 
